@@ -1,6 +1,7 @@
 package com.example.floatingwidget;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
@@ -11,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +28,13 @@ import java.util.Date;
 public class WidgetService extends Service {
     int LAYOUT_FLAG;
     View mFloatingView;
+    View kFloatingView;
     WindowManager windowManager;
     ImageView imageClose;
     TextView tvWidget;
+    EditText editText;
     float height,width;
+    Boolean flag = true;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,6 +48,21 @@ public class WidgetService extends Service {
         }else {
             LAYOUT_FLAG = WindowManager.LayoutParams.TYPE_PHONE;
         }
+
+        kFloatingView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.floating_box,null);
+        WindowManager.LayoutParams boxParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                LAYOUT_FLAG,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT);
+
+        boxParams.x=0;
+        boxParams.y= 0;
+
+
+
+
         //inflate widget layout
         mFloatingView = LayoutInflater.from(this).inflate(R.layout.layout_widget,null);
         WindowManager.LayoutParams layoutParams = new WindowManager.LayoutParams(
@@ -70,12 +91,36 @@ public class WidgetService extends Service {
         imageClose = new ImageView(this);
         imageClose.setImageResource(R.drawable.ic_close);
         imageClose.setVisibility(View.INVISIBLE);
+        windowManager.addView(kFloatingView,boxParams);
         windowManager.addView(imageClose,imageParams);
         windowManager.addView(mFloatingView,layoutParams);
+
+        kFloatingView.setVisibility(View.GONE);
         mFloatingView.setVisibility(View.VISIBLE);
 
         height = windowManager.getDefaultDisplay().getHeight();
         width = windowManager.getDefaultDisplay().getWidth();
+
+
+
+
+
+        editText =kFloatingView. findViewById(R.id.ed_floating);
+        kFloatingView.setClickable(true);
+
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editText.setCursorVisible(true);
+                editText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+            }
+        });
+
+
+
+
 
         tvWidget = mFloatingView.findViewById(R.id.text_widget);
         //show current time in text view
@@ -116,11 +161,24 @@ public class WidgetService extends Service {
                         layoutParams.y = initialY+(int)(motionEvent.getRawY()-initialTouchY);
 
                         if(clickDuration < MAX_CLICK_DURATION){
-                            Toast.makeText(WidgetService.this,"time: "+tvWidget.getText().toString(),Toast.LENGTH_SHORT).show();
+//                            Intent intent1 = new Intent(getApplicationContext(),MainActivity.class);
+//                            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                            getApplicationContext().startActivity(intent1);
+//                            stopSelf();
+                            if(flag){
+                                flag = false;
+                                kFloatingView.setVisibility(View.VISIBLE);
+                                mFloatingView.setVisibility(View.GONE);
+                                mFloatingView.setVisibility(View.VISIBLE);
+                            }else{
+                                flag = true;
+                                kFloatingView.setVisibility(View.GONE);
+                            }
+
 
                         }else{
                             //remove widget
-                            if(layoutParams.y>(height*0.6)){
+                            if(layoutParams.y>(height*0.76)){
                                 stopSelf();
                             }
                         }
@@ -131,7 +189,7 @@ public class WidgetService extends Service {
                         layoutParams.y = initialY+(int)(motionEvent.getRawY()-initialTouchY);
                         //update layout with new coordinates
                         windowManager.updateViewLayout(mFloatingView,layoutParams);
-                        if(layoutParams.y>(height*0.6)){
+                        if(layoutParams.y>(height*0.76)){
                             //black
                             imageClose.setImageResource(R.drawable.ic_close_red);
                         }else {
@@ -156,6 +214,9 @@ public class WidgetService extends Service {
         }
         if(imageClose!=null){
             windowManager.removeView(imageClose);
+        }
+        if(kFloatingView!=null){
+            windowManager.removeView(kFloatingView);
         }
     }
 }

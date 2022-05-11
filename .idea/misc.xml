@@ -4,8 +4,11 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/drawable/ic_background.xml" value="0.1" />
+        <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/drawable/ic_background2.xml" value="0.1595" />
+        <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/drawable/ic_close.xml" value="0.1595" />
         <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/drawable/ic_close_red.xml" value="0.1" />
         <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/layout/activity_main.xml" value="0.13323201621073963" />
+        <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/layout/floating_box.xml" value="0.27447916666666666" />
         <entry key="..\:/Users/maher/AndroidStudioProjects/floatingwidget/app/src/main/res/layout/layout_widget.xml" value="0.13323201621073963" />
       </map>
     </option>
